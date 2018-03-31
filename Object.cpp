@@ -12,8 +12,9 @@ Object::Object(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool Scre
 void Object::Display() {
 	DrawGraph(Gx, Gy, Handle, TRUE);
 }
-
+/*
 void Object::SetXY() {
 	x = Gx + GraphicSizeX / 2;
 	y = Gy + GraphicSizeY / 2;
 }
+*/
