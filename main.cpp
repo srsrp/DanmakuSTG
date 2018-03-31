@@ -68,7 +68,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		Renko.Move();
 
 		//蓮子の弾幕の移動
-		for (n = 0; n < 30; n++) {
+		for (n = 0; n < 100; n++) {
 			if (KeyBuffer[KEY_INPUT_Z] && RenkoBarrge001[n].ScreenFlag == FALSE) {
 				RenkoBarrge001[n].Gx = Renko.Gx;				//中心とずれる
 				RenkoBarrge001[n].Gy = Renko.Gy;				//同上
@@ -77,7 +77,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		for (n = 0; n < 30; n++) {
+		for (n = 0; n < 100; n++) {
 			if (RenkoBarrge001[n].ScreenFlag == TRUE) {
 				RenkoBarrge001[n].Display();
 				RenkoBarrge001[n].Move(0, RenkoBarrge001[n].RunSpeed);
