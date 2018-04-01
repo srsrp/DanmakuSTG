@@ -13,7 +13,6 @@ public:
 	Object();
 	Object(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_);
 	void Display();
-	//void SetXY();
 };
 
 #endif
