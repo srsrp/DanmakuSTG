@@ -1,29 +1,44 @@
 #include "DxLib.h"
 #include "Enemy.h"
+#include "math.h"
+#include "Constant.h"
 
 Enemy::Enemy(){}
 
-Enemy::Enemy(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_, int MoveSpeed_) 
-	:Object(Gx_, Gy_, GraphicSizeX_, GraphicSizeY_, ScreenFlag_, FileName_), MoveSpeed(MoveSpeed_)
+Enemy::Enemy(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_) 
+	:Object(Gx_, Gy_, GraphicSizeX_, GraphicSizeY_, ScreenFlag_, FileName_), MoveSpeed(0)
 {}
 
-void Enemy::Move(int Way_, int MoveSpeed_) {
-	switch (Way_) {//right,up,EEE‚Æ‚©‚ÅŽw’è‚Å‚«‚ê‚Î‚È‚¨‚í‚©‚èˆÕ‚¢
-	case 0://ã
-		Gy -= MoveSpeed_;
-		y -= Gy + GraphicSizeY / 2;
+void Enemy::SetPos(int x_, int y_) {
+	ScreenFlag = TRUE;
+	Gx = x_;
+	Gy = y_;
+}
+
+void Enemy::Move(int Pattern_, double x, double y, int Speed_) {
+	if (ScreenFlag == TRUE)Display();
+	switch (Pattern_) {
+	case 0://ç›´ç·šç§»å‹•ã€xã¯è§’åº¦
+		Gx += Speed_ * cos(x);
+		Gy += Speed_ * sin(x);
+		if (Gx > RIGHT + 30 || Gx < LEFT - 40)ScreenFlag = FALSE;
 		break;
-	case 1://‰E
-		Gx += MoveSpeed_;
-		x += Gx + GraphicSizeX / 2;
+
+	case 1://ç›´è§’ç§»å‹•
+		if (Gy < y) {
+			Gy += Speed_;
+		}
+		if (Gy >= y) {
+			if (x < CENTER)Gx += Speed_;
+			if (x > CENTER)Gx -= Speed_;
+		}
+		if (Gx > RIGHT + 30 || Gx < LEFT - 40)ScreenFlag = FALSE;
 		break;
-	case 2://‰º
-		Gy += MoveSpeed_;
-		y += Gy + GraphicSizeY / 2;
-		break;
-	case 3://¶
-		Gx -= MoveSpeed_;
-		x -= Gx + GraphicSizeX / 2;
+
+	case 2://æ¼¸è¿‘æ›²ç·š
+		Gx += Speed_;
+		Gy += 0.04*Speed_ * (y - Gy);
+		if (Gx > RIGHT + 30 || Gx < LEFT - 40)ScreenFlag = FALSE;
 		break;
 	}
 }
