@@ -176,10 +176,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		Enemy1[1].Move(1, 320, 250, 2);
 		Enemy1[0].Move(1, 100, 250, 2);
 
-		
-
-
-
 		/*LoopCount == 1500)Enemy1[0].SetPos(100, 0);
 		Enemy1[0].Move(1, 100, 200, 1);
 		*/
