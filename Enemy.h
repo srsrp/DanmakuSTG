@@ -8,10 +8,13 @@ public:
 	int MoveSpeed;
 
 	Enemy();
-	Enemy(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_, int MoveSpeed_);
+	Enemy(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_);
 
-	//•ûŒüA—Ê
-	void Move(int Way_, int MoveSpeed_);
+	void SetPos(int x_, int y_);
+
+	//åº§æ¨™æŒ‡å®šã—ã¦ç§»å‹•
+	void Move(int Pattern_, double x, double y, int Speed_);
+
 };
 
 #endif
