@@ -1,44 +1,53 @@
 #include "DxLib.h"
 #include "Enemy.h"
-#include "math.h"
+#include <cmath>
 #include "Constant.h"
 
 Enemy::Enemy(){}
-
-Enemy::Enemy(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_) 
-	:Object(Gx_, Gy_, GraphicSizeX_, GraphicSizeY_, ScreenFlag_, FileName_), MoveSpeed(0)
-{}
-
-void Enemy::SetPos(int x_, int y_) {
-	ScreenFlag = TRUE;
-	Gx = x_;
-	Gy = y_;
+Enemy::Enemy(double Gx_, double Gy_, double Speed_, int GraphSizeX_, int GraphSizeY_, bool ScreenFlag_, char* FileName_)
+	:Object(Gx_, Gy_, Speed_, GraphSizeX_, GraphSizeY_, ScreenFlag_, FileName_)
+{
+	//BarHandle = LoadGraph(FileName2_);
 }
 
-void Enemy::Move(int Pattern_, double x, double y, int Speed_) {
+void Enemy::SetUp(int LoopCount_, int MovePattern_, double Speed_, double x_, double y_, double A_, double B_, double C_) {
+	ScreenFlag = TRUE;
+	LoopCountIni = LoopCount_;
+	MovePattern = MovePattern_;
+	Speed = Speed_;
+	Gx = x_;
+	Gy = y_;
+	A = A_;
+	B = B_;
+	C = C_;
+}
+
+void Enemy::Move() {
 	if (ScreenFlag == TRUE)Display();
-	switch (Pattern_) {
-	case 0://直線移動、xは角度
-		Gx += Speed_ * cos(x);
-		Gy += Speed_ * sin(x);
-		if (Gx > RIGHT + 30 || Gx < LEFT - 40)ScreenFlag = FALSE;
+	double Time = LoopCount - LoopCountIni;
+
+	switch (MovePattern) {
+	case 0://減速して接近、静止後、加速して離脱
+		/*	A	:行きの角度
+			B	:帰りの角度
+			C	:停止ループ数		*/
+		if (Time < 150) {
+			Gx += Speed * cos(PI / 180 * A) * (1 - Time / 150);
+			Gy += Speed * sin(PI / 180 * A) * (1 - Time / 150);
+		}
+		if (Time >= 150 + C) {
+			Gx += Speed * cos(PI / 180 * B) * (1 - Time / 150);
+			Gy += Speed * sin(PI / 180 * B) * (1 - Time / 150);
+		}
 		break;
 
-	case 1://直角移動
-		if (Gy < y) {
-			Gy += Speed_;
-		}
-		if (Gy >= y) {
-			if (x < CENTER)Gx += Speed_;
-			if (x > CENTER)Gx -= Speed_;
-		}
-		if (Gx > RIGHT + 30 || Gx < LEFT - 40)ScreenFlag = FALSE;
-		break;
-
-	case 2://漸近曲線
-		Gx += Speed_;
-		Gy += 0.04*Speed_ * (y - Gy);
-		if (Gx > RIGHT + 30 || Gx < LEFT - 40)ScreenFlag = FALSE;
+	case 1://等速運動
+		   /*	A	:x軸からの角度
+				B	:
+				C	:			*/
+		Gx += Speed * cos(PI / 180 * A);
+		Gy += Speed * sin(PI / 180 * A);
 		break;
 	}
+	if (Gx<LEFT - 50 || Gx>RIGHT + 50 || Gy<UP - 50 || Gy>DOWN + 50)ScreenFlag = FALSE;
 }
