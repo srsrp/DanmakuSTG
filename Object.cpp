@@ -3,8 +3,8 @@
 
 Object::Object(){}
 
-Object::Object(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_) :
-	Gx(Gx_), Gy(Gy_), GraphicSizeX(GraphicSizeX_), GraphicSizeY(GraphicSizeY_), x(Gx_ + GraphicSizeX / 2), y(Gy_ + GraphicSizeY / 2), ScreenFlag(FALSE)
+Object::Object(double Gx_, double Gy_,double Speed_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_) :
+	Gx(Gx_), Gy(Gy_), Speed(Speed_), GraphicSizeX(GraphicSizeX_), GraphicSizeY(GraphicSizeY_), ScreenFlag(FALSE)
 {
 	Handle = LoadGraph(FileName_);
 }
@@ -12,9 +12,3 @@ Object::Object(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool Scre
 void Object::Display() {
 	DrawGraph(Gx, Gy, Handle, TRUE);
 }
-/*
-void Object::SetXY() {
-	x = Gx + GraphicSizeX / 2;
-	y = Gy + GraphicSizeY / 2;
-}
-*/
