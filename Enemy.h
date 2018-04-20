@@ -1,19 +1,24 @@
 #ifndef INCLUDED_ENEMY_H_
 #define INCLUDED_ENEMY_H_
 
-#include "Object.h"
+#include "Object.h" 
 
 class Enemy :public Object {
+private:
+
+	int MovePattern;			//敵の移動パターン
+	int LoopCountIni;			//出現ループ数
+	double A, B, C;				//移動に関するパラメータ
+
 public:
-	int MoveSpeed;
 
+	//コンストラクタ
 	Enemy();
-	Enemy(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_);
+	Enemy(double Gx_, double Gy_, double Speed_, int GraphSizeX_, int GraphSizeY_, bool ScreenFlag_, char* FileName_);
 
-	void SetPos(int x_, int y_);
-
-	//座標指定して移動
-	void Move(int Pattern_, double x, double y, int Speed_);
+	//移動に関するメソッド
+	void SetUp(int LoopCount_, int MovePattern_, double Speed_, double x_, double y_, double A_, double B_, double C_);
+	void Move();									//ループごとに呼び出し。SetUp関数に従って移動。
 
 };
 
