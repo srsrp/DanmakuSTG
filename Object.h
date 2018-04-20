@@ -1,18 +1,23 @@
-﻿#ifndef INCLUDED_OBJECT_H_
+#ifndef INCLUDED_OBJECT_H_
 #define INCLUDED_OBJECT_H_
 
 class Object {
-public:
-	int Gx, Gy;		//ćĚŔW
+private:
 	int GraphicSizeX, GraphicSizeY;
-	int x, y;
-
-	bool ScreenFlag;
 	int Handle;
 
+protected:
+	
+	double Speed;	
+
+public:
+	double Gx, Gy;		//ćĚŔW
+	bool ScreenFlag;
 	Object();
-	Object(int Gx_, int Gy_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_);
+	Object(double Gx_, double Gy_, double Speed_, int GraphicSizeX_, int GraphicSizeY_, bool ScreenFlag_, char* FileName_);
+	
 	void Display();
+
 };
 
 #endif
