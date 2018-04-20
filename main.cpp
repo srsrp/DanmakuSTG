@@ -8,21 +8,22 @@
 
 //一般の変数
 int LoopCount = 0;
-int n, m;
+int n = 0;
+int m = 0;
+int l = 0;
 char KeyBuffer[256];
 
-//蓮子の初期位置
-int RenkoX = (LEFT + RIGHT) / 2;
-int RenkoY = (UP + DOWN) / 2 + 200;
-
+void SetEne(Enemy enemy_[], int LoopCount_, int MovePattern_, double Speed_, double Gx_, double Gy_, double A_, double B_, double C_);
+void SetBar(Barrage barrage_[], int LoopCount_, int MovePattern_, double Speed_, double Gx_, double Gy_, double A_, double B_, double C_);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	//画像Handle
-	char renkohd[50] = "renko.png";								//30*40
-	char renkobarrage001hd[50] = "renkobarrage001.png";			//30*15
-	char enemy001hd[50] = "enemy001.png";						//30*40
-	char enemybarrage001hd[50] = "enemybarrage001.png";			//16*16
-	char enemy002hd[50] = "enemy002.png";						//30*40
+	char renkohd[50]			=	"renko.png";					//30*40
+	char renkobarrage001hd[50]	=	"renkobarrage001.png";			//30*15
+	char enemy001hd[50]			=	"enemy001.png";					//30*40
+	char enemybarrage001hd[50]	=	"enemybarrage001.png";			//16*16
+	char enemybarrage002hd[50]	=	"enemybarrage002.png";			//16*16
+	char enemy002hd[50]			=	"enemy002.png";					//30*40
 
 	//背景に関する変数
 	unsigned int fuji;
@@ -34,41 +35,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetWindowPosition(0, 10);
 
 	//自機
-	Player Renko(RenkoX, RenkoY, 30, 40, TRUE, renkohd, 5);
-	Barrage RenkoBarrge001[100];
+	Player Renko(RenkoX, RenkoY, 30, 40, 5, TRUE, renkohd);
+	Barrage *RenkoBar0;
+	RenkoBar0 = new Barrage[100];
 	for (n = 0; n < 100; n++) {
-		RenkoBarrge001[n] = Barrage(0, 0, 30, 15, FALSE, renkobarrage001hd, 12, 0);
+		RenkoBar0[n] = Barrage(0, 0, 10, 30, 15, FALSE, renkobarrage001hd);
 	}
 
 	//今は出てこない敵
-	Enemy Enemy100(420, 100, 30, 40, FALSE, enemy001hd);
+	/*Enemy Enemy100(420, 100, 30, 40, FALSE, enemy001hd);
 	Barrage Enemy100Barrage[100];
 	for (n = 0; n < 100; n++) {
-		Enemy100Barrage[n] = Barrage(0, 0, 16, 16, FALSE, enemybarrage001hd, 12, 0);
+		Enemy100Barrage[n] = Barrage(0, 0, 16, 16, FALSE, enemybarrage002hd, 12, 0);
+	}*/
+
+	//水色の敵
+	Enemy *Enemy0;
+	Enemy0 = new Enemy[50];
+	for (n = 0; n < 50; n++) {
+		Enemy0[n] = Enemy(0, 0, 30, 40, 0, FALSE, enemy001hd);
+	}
+	Barrage *Bar0;
+	Bar0 = new Barrage[100];
+	for (n = 0; n < 100; n++) {
+		Bar0[n] = Barrage(0, 0, 10, 16, 16, FALSE, enemybarrage002hd);
 	}
 
-	//Pattern0で出てくる敵
-	Enemy Enemy0[30];
-	for (n = 0; n < 30; n++) {
-		Enemy0[n] = Enemy(0, 0, 30, 40, FALSE, enemy001hd);
+	//オレンジの敵
+	Enemy *Enemy1;
+	Enemy1 = new Enemy[50];
+	for (n = 0; n < 50; n++) {
+		Enemy1[n] = Enemy(0, 0, 30, 40, 0, FALSE, enemy002hd);
 	}
-	Barrage Enemy0Bar[30][100];
-	for (n = 0; n < 30; n++) {
-		for (m = 0; m < 100; m++) {
-			Enemy0Bar[n][m] = Barrage(0, 0, 16, 16, FALSE, enemybarrage001hd, 12, 0);
-		}
-	}
-
-	//Patten1
-	Enemy Enemy1[10];
-	for (n = 0; n < 10; n++) {
-		Enemy1[n] = Enemy(0, 0, 30, 40, FALSE, enemy002hd);
-	}
-
-	//Pattern2
-	Enemy Enemy2[10];
-	for (n = 0; n < 10; n++) {
-		Enemy2[n] = Enemy(0, 0, 30, 40, FALSE, enemy002hd);
+	Barrage *Bar1;
+	Bar1 = new Barrage[100];
+	for (n = 0; n < 100; n++) {
+		Bar1[n] = Barrage(0, 0, 10, 16, 16, FALSE, enemybarrage001hd);
 	}
 
 	//背景
@@ -90,109 +92,115 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (Renko.ScreenFlag == FALSE)Renko.Display();
 		Renko.Move();
 
-		//蓮子の弾幕の移動
+		//蓮子の弾幕の移動	
 		for (n = 0; n < 100; n++) {
-			if (KeyBuffer[KEY_INPUT_Z] && RenkoBarrge001[n].ScreenFlag == FALSE) {
-				RenkoBarrge001[n].Gx = Renko.Gx;				//中心とずれる
-				RenkoBarrge001[n].Gy = Renko.Gy;				//同上
-				RenkoBarrge001[n].ScreenFlag = TRUE;
+			if (KeyBuffer[KEY_INPUT_Z] == TRUE && RenkoBar0[n].ScreenFlag == FALSE) {
+				RenkoBar0[n].ScreenFlag = TRUE;
+				RenkoBar0[n].Gx = Renko.Gx;
+				RenkoBar0[n].Gy = Renko.Gy;
 				break;
 			}
 		}
 
 		for (n = 0; n < 100; n++) {
-			if (RenkoBarrge001[n].ScreenFlag == TRUE) {
-				RenkoBarrge001[n].Display();
-				RenkoBarrge001[n].Move(0, RenkoBarrge001[n].RunSpeed);
-				if (RenkoBarrge001[n].Gy < UP)RenkoBarrge001[n].ScreenFlag = FALSE;
+			if (RenkoBar0[n].ScreenFlag == TRUE) {
+				RenkoBar0[n].Display();
+				RenkoBar0[n].Gy -= 10;
+				if (RenkoBar0[n].Gy < UP)RenkoBar0[n].ScreenFlag = FALSE;
 			}
 		}
 
 		//敵周りの表示
-		/*
-		//LoopCount=100で最初の敵登場
 
-		if (LoopCount > 100) Enemy100.ScreenFlag = TRUE;
-
-		if (Enemy100.ScreenFlag == TRUE) {
-			Enemy100.Display();
-
-			//CENTERまで右から移動してくる
-			if (Enemy100.Gx > CENTER)Enemy100.Move(3, 3);
-			//弾幕を撃っている間静止
-			if (Enemy100Barrage[24].ScreenFlag == TRUE) {
-				Enemy100.Move(3, 3);
-			}
-			
-			//当たり判定
-			for (n = 0; n < 100; n++) {
-				RenkoBarrge001[n].Distance = sqrt((RenkoBarrge001[n].x - Enemy100.x)*(RenkoBarrge001[n].x - Enemy100.x) + (RenkoBarrge001[n].y - Enemy100.y)*(RenkoBarrge001[n].y - Enemy100.y));
-				if (RenkoBarrge001[n].Distance <= 10) {
-					Enemy100.ScreenFlag = FALSE;
-				}
-
-			}
-			
-		}
+		//るーぷ100~
+		SetEne(Enemy0, 100, 0, 3, LEFT, 50, 60, 75, 0);
+		SetBar(Bar0, 100, 1, 3, Enemy0[0].Gx, Enemy0[0].Gy, 60, 0, 0);
+		SetEne(Enemy0, 110, 0, 3, LEFT, 35, 68, 82, 0);
+		SetBar(Bar0, 110, 1, 3, Enemy0[1].Gx, Enemy0[1].Gy, 50, 0, 0);
+		SetEne(Enemy0, 120, 0, 3, LEFT, 65, 65, 87, 0);
+		SetBar(Bar0, 120, 1, 3, Enemy0[2].Gx, Enemy0[0].Gy, 80, 0, 0);
+		//弾幕
 		
+		SetEne(Enemy0, 160, 0, 3, RIGHT - 50, 0, 120, 110, 0);
+		SetBar(Bar0, 160, 1, 3, Enemy0[3].Gx, Enemy0[3].Gy, 110, 0, 0);
+		SetEne(Enemy0, 170, 0, 3, RIGHT - 46, 0, 115, 118, 0);
+		SetBar(Bar0, 170, 1, 3, Enemy0[4].Gx, Enemy0[4].Gy, 80, 0, 0);
+		SetEne(Enemy0, 180, 0, 3, RIGHT - 55, 0, 119, 127, 0);
+		SetBar(Bar0, 180, 1, 3, Enemy0[5].Gx, Enemy0[5].Gy, 70, 0, 0);
+		SetEne(Enemy0, 190, 0, 3, RIGHT - 51, 0, 118, 120, 0);
+		SetBar(Bar0, 190, 1, 3, Enemy0[6].Gx, Enemy0[6].Gy, 20, 0, 0);
+		SetEne(Enemy0, 200, 0, 3, RIGHT - 49, 0, 116, 121, 0);
+		SetBar(Bar0, 200, 1, 3, Enemy0[7].Gx, Enemy0[7].Gy, 55, 0, 0);
 
-		//CENTERまで来たら弾幕を撃つ
-		if (Enemy100.Gx <= CENTER) {
-			for (n = 0; n < 25; n++) {
-				if (Enemy100Barrage[n].ScreenFlag == FALSE && LoopCount % 2 == 0) {
-					Enemy100Barrage[n].Gx = Enemy100.Gx + 7;
-					Enemy100Barrage[n].Gy = Enemy100.Gy + 12;
-					Enemy100Barrage[n].ScreenFlag = TRUE;
-					break;
-				}
-			}
-			for (n = 0; n < 25; n++) {
-				if (Enemy100Barrage[n].ScreenFlag == TRUE) {
-					Enemy100Barrage[n].Display();
-					Enemy100Barrage[n].Move(1, 3 * cos(2 * PI / 8 + 2 * PI / 5 * n));
-					Enemy100Barrage[n].Move(2, 3 * sin(2 * PI / 8 + 2 * PI / 5 * n));
+		SetEne(Enemy0, 350, 0, 3, LEFT + 150, 0, 85, 80, 10);
+		SetBar(Bar0, 350, 1, 3, Enemy0[8].Gx, Enemy0[8].Gy, 120, 0, 0);
+		SetEne(Enemy0, 355, 0, 3, LEFT + 134, 0, 67, 70, 10);
+		SetBar(Bar0, 355, 1, 3, Enemy0[9].Gx, Enemy0[9].Gy, 90, 0, 0);
+		SetEne(Enemy0, 360, 0, 3, LEFT + 169, 0, 79, 85, 10);
+		SetBar(Bar0, 360, 1, 3, Enemy0[10].Gx, Enemy0[10].Gy, 75, 0, 0);
+		SetEne(Enemy0, 365, 0, 3, LEFT + 144, 0, 87, 88, 10);
+		SetBar(Bar0, 365, 1, 3, Enemy0[11].Gx, Enemy0[11].Gy, 120, 0, 0);
+		SetEne(Enemy0, 370, 0, 3, LEFT + 120, 0, 59, 50, 10);
+		SetBar(Bar0, 370, 1, 3, Enemy0[12].Gx, Enemy0[12].Gy, 100, 0, 0);
 
-				}
-			}
+		//るーぷ450~
+		SetEne(Enemy1, 450, 0, 2, CENTER - 100, 0, 90, 90, 50);
+		SetBar(Bar1, 450, 0, 4, Enemy1[0].Gx, Enemy1[0].Gy, 0, 0, 0);
+		SetEne(Enemy1, 450, 0, 2, CENTER + 100, 0, 90, 90, 50);
+		SetBar(Bar1, 450, 0, 4, Enemy1[1].Gx, Enemy1[1].Gy, 0, 0, 0);
+		SetEne(Enemy1, 500, 0, 2.5, CENTER, 0, 90, 90, 100);
+		SetBar(Bar1, 500, 0, 4, Enemy1[2].Gx, Enemy1[2].Gy, 0, 0, 0);
+
+		//るーぷ600~
+		SetEne(Enemy0, 600, 1, 5, LEFT, 10, 5, 0, 0);
+		SetEne(Enemy0, 610, 1, 5, LEFT, 150, -14, 0, 0);
+		SetEne(Enemy0, 615, 1, 5, LEFT, 80, 0, 0, 0);
+		SetEne(Enemy0, 622, 1, 5, LEFT, 70, 2, 0, 0);
+
+		SetEne(Enemy0, 605, 1, -5, RIGHT, 30, 11, 0, 0);
+		SetEne(Enemy0, 610, 1, -5, RIGHT, 60, 7, 0, 0);
+		SetEne(Enemy0, 618, 1, -5, RIGHT, 180, -10, 0, 0);
+		SetEne(Enemy0, 628, 1, -5, RIGHT, 40, 17, 0, 0);
+
+		//るーぷ680
+		SetEne(Enemy0, 680, 0, 2.5, RIGHT - 10, 0, 100, 110, 10);
+		SetEne(Enemy0, 690, 0, 2.5, RIGHT, 10, 110, 105, 10);
+		SetEne(Enemy0, 700, 0, 2.5, RIGHT - 40, 0, 95, 91, 15);
+		SetEne(Enemy0, 710, 0, 2.5, RIGHT, 20, 115, 100, 15);
+
+		SetEne(Enemy0, 685, 0, 2, LEFT + 50, 0, 80, 175, 0);
+		SetEne(Enemy0, 695, 0, 2, LEFT + 58, 0, 81, 173, 0);
+		SetEne(Enemy0, 705, 0, 2, LEFT + 40, 0, 88, 179, 0);
+		SetEne(Enemy0, 715, 0, 2, LEFT + 64, 0, 71, 169, 0);
+
+		SetEne(Enemy1, 700, 0, 2, CENTER - 120, 0, 90, 0, 50);
+		SetBar(Bar1, 700, 0, 4, Enemy1[3].Gx, Enemy1[3].Gy, 0, 0, 0);
+		SetEne(Enemy1, 720, 0, 3, CENTER - 160, 0, 90, 0, 50);
+		SetBar(Bar1, 720, 0, 4, Enemy1[4].Gx, Enemy1[4].Gy, 0, 0, 0);
+		SetEne(Enemy1, 700, 0, 2, CENTER + 120, 0, 90, 0, 50);
+		SetBar(Bar1, 700, 0, 4, Enemy1[5].Gx, Enemy1[5].Gy, 0, 0, 0);
+		SetEne(Enemy1, 720, 0, 3, CENTER + 160, 0, 90, 0, 50);
+		SetBar(Bar1, 720, 0, 4, Enemy1[6].Gx, Enemy1[6].Gy, 0, 0, 0);
+
+		//る-ぷ900
+		SetEne(Enemy1, 900, 0, 4, CENTER, 0, 90, 90, 150);
+		SetEne(Enemy1, 940, 0, 3.5, CENTER - 75, 0, 90, 90, 150);
+		SetEne(Enemy1, 940, 0, 3.5, CENTER + 75, 0, 90, 90, 150);
+		SetEne(Enemy1, 980, 0, 3, CENTER - 150, 0, 90, 90, 150);
+		SetBar(Bar1, 980, 0, 4, Enemy1[7].Gx, Enemy1[7].Gy, 0, 0, 0);
+		SetEne(Enemy1, 980, 0, 3, CENTER + 150, 0, 90, 90, 150);
+		SetBar(Bar1, 980, 0, 4, Enemy1[8].Gx, Enemy1[8].Gy, 0, 0, 0);
+
+		//敵を動かす
+		for (m = 0; m < 50; m++) {
+			Enemy0[m].Move();
+			Enemy1[m].Move();
 		}
-		*/
-
-		for (n = 0; n < 3; n++) {
-			if (LoopCount == 100 + 20 * n)Enemy0[n].SetPos(0, 75 + 25 * n);
-			Enemy0[n].Move(0, PI / 6, 0, 4);
-		}
-
-		for (n = 3; n < 6; n++) {
-			if (LoopCount == 90 + 20 * n)Enemy0[n].SetPos(420, 25 * n);
-			Enemy0[n].Move(0, 5 * PI / 6, 0, 4);
-		}
-
-		if (LoopCount == 200) {
-			
-			Enemy1[1].SetPos(320, 0);
-			Enemy1[0].SetPos(100, 0);
-		}
-		
-		Enemy1[1].Move(1, 320, 250, 2);
-		Enemy1[0].Move(1, 100, 250, 2);
-
-		/*LoopCount == 1500)Enemy1[0].SetPos(100, 0);
-		Enemy1[0].Move(1, 100, 200, 1);
-		*/
-
-		//Pattern2
-		if (LoopCount == 2500)Enemy2[0].SetPos(100, 0);
-		Enemy2[0].Move(2, 0, 250, 3);
-
-		//蓮子の当たり判定
-		/*
+		//敵弾幕を動かす
 		for (n = 0; n < 100; n++) {
-			Enemy100Barrage[n].Distance = sqrt((Enemy100Barrage[n].x - Renko.x)*(Enemy100Barrage[n].x - Renko.x) + (Enemy100Barrage[n].y - Renko.y)*(Enemy100Barrage[n].y - Renko.y));
-			if (Enemy100Barrage[n].Distance <= 10) {
-				Renko.ScreenFlag = FALSE;
-			}
+			Bar0[n].Move();
+			Bar1[n].Move();
 		}
-		*/
 
 		ScreenFlip();
 		LoopCount++;
@@ -202,4 +210,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	DxLib_End();
 	return 0;
+}
+
+void SetEne(Enemy enemy_[],int LoopCount_,int MovePattern_,double Speed_,double Gx_,double Gy_,double A_,double B_,double C_) {
+	if (LoopCount == LoopCount_) {
+		for (int m = 0; m < 50; m++) {
+			if (enemy_[m].ScreenFlag == FALSE) {
+				enemy_[m].SetUp(LoopCount_, MovePattern_, Speed_, Gx_, Gy_, A_, B_, C_);
+				break;
+			}
+		}
+	}
+}
+
+void SetBar(Barrage barrage_[], int LoopCount_, int MovePattern_, double Speed_, double Gx_, double Gy_, double A_, double B_, double C_) {
+	if (LoopCount >= LoopCount_ && LoopCount % 10 == 0) {
+		for (int m = 0; m < 100; m++) {
+			if (barrage_[m].ScreenFlag == FALSE) {
+				barrage_[m].SetUp(LoopCount_, MovePattern_, Speed_, Gx_, Gy_, A_, B_, C_);
+				break;
+			}
+		}
+	}
 }
