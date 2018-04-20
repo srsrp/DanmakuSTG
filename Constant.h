@@ -11,6 +11,11 @@
 #define DOWN						420
 #define CENTER						(LEFT+RIGHT)/2
 
+#define RenkoX						(LEFT + RIGHT) / 2
+#define RenkoY						(UP + DOWN) / 2 + 200
+
 #define PI							3.1415926535
+
+extern int LoopCount;
 
 #endif
