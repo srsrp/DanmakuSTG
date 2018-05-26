@@ -1,53 +1,75 @@
-#include "DxLib.h"
-#include "Enemy.h"
-#include <cmath>
+#ifndef INCLUDED_ENEMY_H_
+#define INCLUDED_ENEMY_H_
+
+#include "Player.h"
 #include "Constant.h"
 
-Enemy::Enemy(){}
-Enemy::Enemy(double Gx_, double Gy_, double Speed_, int GraphSizeX_, int GraphSizeY_, bool ScreenFlag_, char* FileName_)
-	:Object(Gx_, Gy_, Speed_, GraphSizeX_, GraphSizeY_, ScreenFlag_, FileName_)
-{
-	//BarHandle = LoadGraph(FileName2_);
-}
+class Enemy{
+	/*
+	オブジェクト宣言時に敵の形、弾幕の形を与える。
+	Setで両方のデータを設定。
+	*/
+private:
+	/*共通*/
+	INT20			LoopCountIni;			//出現ループ数
+	void Set(int LoopCount_, EnePattern EnemyPatter_, double Speed_, double Gx_, double Gy_, BarPattern BarragePattern_, double BarrageSpeed_, double A_ = 0, double B_ = 0, double C_ = 0, double a_ = 0, double b_ = 0, double c_ = 0, double d_ = 0, double e_ = 0);
+	
+	/*敵*/	
+	enum EneDesign	EnemyDesign;			//デザイン
+	enum EnePattern	EnemyPattern[ENE_MAX];	//移動パターン
 
-void Enemy::SetUp(int LoopCount_, int MovePattern_, double Speed_, double x_, double y_, double A_, double B_, double C_) {
-	ScreenFlag = TRUE;
-	LoopCountIni = LoopCount_;
-	MovePattern = MovePattern_;
-	Speed = Speed_;
-	Gx = x_;
-	Gy = y_;
-	A = A_;
-	B = B_;
-	C = C_;
-}
+	DBL20			Speed;					//速さ
+	
+	DBL20			A,
+					B,
+					C;						//パラメータ
 
-void Enemy::Move() {
-	if (ScreenFlag == TRUE)Display();
-	double Time = LoopCount - LoopCountIni;
+	int				Handle;					//画像ハンドル
+	int				GrSizeX,
+					GrSizeY;				//画像サイズ
+	
+	
+	void			EnemyDisplay();			//表示関数
+	void			EnemyMove();
 
-	switch (MovePattern) {
-	case 0://減速して接近、静止後、加速して離脱
-		/*	A	:行きの角度
-			B	:帰りの角度
-			C	:停止ループ数		*/
-		if (Time < 150) {
-			Gx += Speed * cos(PI / 180 * A) * (1 - Time / 150);
-			Gy += Speed * sin(PI / 180 * A) * (1 - Time / 150);
-		}
-		if (Time >= 150 + C) {
-			Gx += Speed * cos(PI / 180 * B) * (1 - Time / 150);
-			Gy += Speed * sin(PI / 180 * B) * (1 - Time / 150);
-		}
-		break;
+	/*弾幕*/
+	enum BarDesign	BarrageDesign;			//デザイン
+	enum BarPattern	BarragePattern[20];		//移動パターン
 
-	case 1://等速運動
-		   /*	A	:x軸からの角度
-				B	:
-				C	:			*/
-		Gx += Speed * cos(PI / 180 * A);
-		Gy += Speed * sin(PI / 180 * A);
-		break;
-	}
-	if (Gx<LEFT - 50 || Gx>RIGHT + 50 || Gy<UP - 50 || Gy>DOWN + 50)ScreenFlag = FALSE;
-}
+	BOOL20			BarrageUseFlag;			//弾幕配列を使っているかのフラグ
+
+	BOOL1000		BarrageScreenFlag;		//画面上にいるかのフラグ
+	DBL1000			BarrageSpeed;			//速さ
+	DBL1000			BarrageGx;
+	DBL1000			BarrageGy;				//座標(左上)
+	DBL1000			BarrageDistance;		//当たり判定用
+	DBL20			a,
+					b,
+					c,
+					e,
+					d;						//パラメータ
+
+	int				BarrageHandle;			//画像ハンドル
+	int				BarrageGrSizeX,
+					BarrageGrSizeY;			//画像サイズ
+
+
+	void			BarrageMove(Player Player_);
+	void			BarrageDisplay();		//表示関数
+public:
+	DBL20			Gx,
+					Gy;						//座標
+	BOOL20			ScreenFlag;				//画面上にいるかのフラグ
+	double			EnemyRadius = 15.0;		//敵の当たり判定半径
+	double			BarrageRadius = 5.0;	//弾幕の当たり判定半径
+	//コンストラクタ
+	Enemy();
+	Enemy(char* FileName_, EneDesign EnemyDesign_, int SizeX_, int SizeY_, char* BarFileName_, BarDesign BarrageDesign_, int BarSizeX_, int BarSizeY_);
+
+	//移動に関するメソッド
+	void SetUp();
+	void Move(Player Player_);
+	void KillCheck(Player *Player_);
+};
+
+#endif
