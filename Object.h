@@ -4,11 +4,11 @@
 class Object {
 private:
 	int GraphicSizeX, GraphicSizeY;
-	int Handle;
 
 protected:
-	
-	double Speed;	
+	int Handle;
+	int GraHandle[2];
+	double Speed;
 
 public:
 	double Gx, Gy;		//ćĚŔW
